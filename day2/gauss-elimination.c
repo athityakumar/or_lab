@@ -1,71 +1,14 @@
 #include <stdio.h>
 
-void gauss_seidel(double a[][100], int m,int n, int new2darr[])
+void gauss_elimination(double a[][100], int m,int n, int new2darr[])
 {
     int i,j,k,key,flag,track=0;
-	double er=0.001,val,x[100],x0[100],sum,a_new[100][100],c;
-    // for(i=0;i<m;i++)
-    // {
-    //     printf("\n");
-    //     for(j=0;j<n;j++)
-    //     {
-    //         printf(" %lf ",a[i][j]);
-    //     }
-    // }
-    // for(j=0;j<n;j++)
-    // {
-    //     flag = 0;
-    //     for(k=0;k<(n-m);k++)
-    //     {
-    //         if(new2darr[k] == j)
-    //             {
-    //                 flag = 1;
-    //             }
-    //     }
-    //     if (flag==0)
-    //     {
-    //         for(i=0;i<m;i++)
-    //         {
-    //             a_new[i][j-track] = a[i][j];                
-    //         }
-    //     }
-    //     else
-    //     {
-    //         track = track+1;
-    //     }
-    //     printf(" \n J-Track %d ",j-track);
-    // }
-    // for(i=0;i<m;i++)
-    // {
-    //     printf("\n");
-    //     for(j=0;j<m;j++)
-    //     {
-    //         printf(" %lf ",a_new[i][j]);
-    //     }
-    // }
-
-    // a = a_new;
-    // printf(" \n Track : %d ",track);
-    // for(k=0;k<(n-m);k++)
-    // {
-    //     printf(" \n Omit column %d ",new2darr[k]);
-    // } 
+    double er=0.001,val,x[100],x0[100],sum,a_new[100][100],c;
     for(i=0;i<m;i++)
     {
-        // a[i][m] = b[i];
         x[i] = 0.0;
     }
-    // for(i=0;i<m;i++)
-    // {
-    //     printf("\n");
-    //     for(j=0;j<=m;j++)
-    //     {
-    //         printf(" %lf ",a[i][j]);
-    //     }
-    // }
-
-
-    for(j=0; j<m; j++) /* loop for the generation of upper triangular matrix*/
+    for(j=0; j<m; j++)
     {
         for(i=0; i<m; i++)
         {
@@ -81,49 +24,14 @@ void gauss_seidel(double a[][100], int m,int n, int new2darr[])
     }
     x[m-1]=a[m-1][m]/a[m-1][m-1];
     for(i=m-1; i>=0; i--)
+    {
+        sum=0;
+        for(j=i+1; j<m; j++)
         {
-            sum=0;
-            for(j=i+1; j<m; j++)
-            {
-                sum=sum+a[i][j]*x[j];
-            }
-            x[i]=(a[i][m]-sum)/a[i][i];
+            sum=sum+a[i][j]*x[j];
         }
-
-
-
-
-
-	// do
-	// { 
- //        for(i=0;i<m;i++)
- //        {
- //            x0[i] = 0.0;
- //        }
-	// 	key = 0;
-	// 	for(i=0;i<m;i++)
-	// 	{
-	// 		sum = b[i];
-	// 		for(j=0;j<m;j++)
-	// 		{
-	// 			if(j!=i)
-	// 			{
-	// 				sum -= (a_new[i][j]*x0[j]);
-	// 			}
-	// 		}
-	// 		x[i] = sum/a_new[i][i];
-	// 		val = (x[i] - x0[i]) / x[i];
-	// 		if(val < 0.0)
-	// 		{
-	// 			val*=(-1.0);
-	// 		}
-	// 		if(val>er)
-	// 		{
-	// 			key = 1;
-	// 			x0[i] = x[i];
-	// 		}
-	// 	}
-	// }while(key==1);
+        x[i]=(a[i][m]-sum)/a[i][i];
+    }
     for(i=0,j=0;i<n;i++)
     {
         flag = 0;
@@ -136,7 +44,7 @@ void gauss_seidel(double a[][100], int m,int n, int new2darr[])
         }
         if (flag==0)
         {   
-            printf(" x%d = %lf ",i,x[j++]);
+            printf(" x%d = %lf ",i+1,x[j++]);
         }
     }
 }
@@ -161,12 +69,12 @@ int number_combine(int arr[], int data[], int start, int end,int index, int r, i
 
 int * combine(int arr[], int data[], int start, int end,int index, int r, int* newarr, int *l)
 {
-	int j,i;
+    int j,i;
     if (index == r)
     {
         for (j=0; j<r; j++)
-		{
-        	*(newarr + *l) = data[j];
+        {
+            *(newarr + *l) = data[j];
             (*l)++;
         }
         return newarr;
@@ -199,15 +107,6 @@ void main () {
         }
     }
     printf("\n");
-        for(i=0;i<m;i++)
-    {
-        printf("\n");
-        for(j=0;j<n;j++)
-        {
-            printf(" %lf ",a[i][j]);
-        }
-    }
-    printf("\n");
     for(i=0;i<m;i++)
     {
         printf(" Input for matrix B's row %d column 1 : ",(i+1));
@@ -223,7 +122,6 @@ void main () {
     int r = n-m;
     int data[r];
     int nc = number_combine(arr, data, 0, n-1, 0, r,0);
-    printf(" \n %d combinations for non-basic variables.",nc);
     int *getarr;
     int newarr[nc*r+1];
     int new2darr[nc+1][r+1];
@@ -233,11 +131,9 @@ void main () {
     getarr = combine(arr, data, 0, n-1, 0, r, getarr, l);
     for (i=0;i<nc;i++)
     {
-        printf("\n");
         for(j=0;j<r;j++)
         {
             new2darr[i][j] = newarr[i*r+j];
-            printf(" %d ",new2darr[i][j]);
         }
     }
 
@@ -246,10 +142,10 @@ void main () {
 
     for(i=0;i<nc;i++)
     {
-        printf("\n\n");
+        printf("\n");
         for(j=0;j<r;j++)
         {
-            printf(" x%d = 0 ",new2darr[i][j]);
+            printf(" x%d = 0 ",new2darr[i][j]+1);
         }
         track = 0;
         for(j=0;j<n;j++)
@@ -278,7 +174,7 @@ void main () {
         {
             a_new[h][m] = b[h];
         }
-        gauss_seidel(a_new,m,n,new2darr[i]);
+        gauss_elimination(a_new,m,n,new2darr[i]);
 
     }
 }

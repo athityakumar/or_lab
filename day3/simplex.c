@@ -1,4 +1,4 @@
-// #include <stdio.h>
+#include <stdio.h>
 
 // double gauss_elimination(double a[][100], int m,int n, int new2darr[], double objective[])
 // {
@@ -146,27 +146,29 @@
 //     a = simplex_solve(a,m);
 // }while(terminate(a,m)==0);
 
-double * doit (int a[][100],int n)
+double * doit (double a[][100],int n)
 {
-    int newarr[n][n];
+    double *ptr;
+    int i,j;
     for(i=0;i<n;i++)
     {
         for(j=0;j<n;j++)
         {
-            newarr[i][j] = a[i][j] + 1;
+            *(ptr + n*i+j) = a[i][j] + 1;
         }
     }
-    return newarr;
+    return ptr;
 }
 
-void main () {
+void main () 
+{
     int i,j,m,n,optimal;
     printf("\n Enter number of unknowns (n) : ");
     scanf("%d",&n);
     // printf(" Enter number of equations (m) : ");
     // scanf("%d",&m);
     // double a[m][n],b[m],objective_function[n];
-    double a[n][n];
+    double a[n][n],*ptr;
     printf("\n");
     for(i=0;i<n;i++)
     {
@@ -177,15 +179,15 @@ void main () {
         }
     }
     printf("\n");
-    a = doit(a,n);
+    ptr = doit(a,n);
     for(i=0;i<n;i++)
     {
         for(j=0;j<n;j++)
         {
-            printf(" marix A's row %d column %d : %lf ",(i+1),(j+1),a[i][j]);
+            a[i][j] = *(ptr + i*n + j);
+            printf(" \n A%d %d = %lf",i+1,j+1,a[i][j]);
         }
     }
-
     // for(i=0;i<m;i++)
     // {
     //     printf(" Input for matrix B's row %d column 1 : ",(i+1));

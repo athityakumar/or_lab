@@ -254,10 +254,18 @@ void main () {
 
     if(sum[0]==sum[1])
     {
-        printf("\n\n Infinitely many optimal solutions, with optimal objective function value = %lf",sum[0]);
+        if(sum[0] == 0)
+        {
+            printf("\n\n No optimal solution.");
+        }
+        else
+        {
+            printf("\n\n Infinitely many optimal solutions, with optimal objective function value = %lf",sum[0]);
+        }
     }
     else
     {
         printf("\n\n Exactly one optimal solution, with optimal objective function value = %lf",sum[0]);        
     }
+    printf("\n");
 }

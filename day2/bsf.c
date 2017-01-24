@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-void gauss_elimination(double a[][100], int m,int n, int new2darr[])
+int gauss_elimination(double a[][100], int m,int n, int new2darr[], int option,int r)
 {
     int i,j,k,key,flag,track=0;
 	double er=0.001,val,x[100],x0[100],sum,a_new[100][100],c;
@@ -49,7 +49,6 @@ void gauss_elimination(double a[][100], int m,int n, int new2darr[])
             {
                 check_infeasibility = 1;
             }
-            printf(" x%d = %lf ",i+1,x[j++]);
         }
     }
     for(i=0;i<(n-m);i++)
@@ -62,17 +61,32 @@ void gauss_elimination(double a[][100], int m,int n, int new2darr[])
             }
         }
     }
-    if(check_infeasibility==1)
+    if((check_infeasibility==1 && option==1)||(check_degeneracy==1 && option ==3)||(check_infeasibility==0 && check_degeneracy==0 && option==2))
     {
-        printf(" - Infeasible solution");
+        for(j=0;j<r;j++)
+        {
+            printf(" x%d = 0.000000 ",new2darr[j]+1);
+        }
+        for(i=0,j=0;i<n;i++)
+        {
+            flag = 0;
+            for(k=0;k<(n-m);k++)
+            {
+                if(new2darr[k] == i)
+                    {
+                        flag = 1;
+                    }
+            }
+            if (flag==0)
+            {                        
+                printf(" x%d = %lf ",i+1,x[j++]);
+            }
+        }
+        return 1;
     }
-    if(check_degeneracy==1)
+    else
     {
-        printf(" - Degenerate solution");
-    }
-    if(check_infeasibility==0 && check_degeneracy==0)
-    {
-        printf(" - Basic feasible solution");
+        return 0;
     }
 }
 
@@ -118,7 +132,7 @@ int * combine(int arr[], int data[], int start, int end,int index, int r, int* n
 
 void main () {
 
-    int i,j,m,n;
+    int i,j,m,n,option;
     printf("\n Enter number of unknowns(n) : ");
     scanf("%d",&n);
     printf(" Enter number of equations (m) : ");
@@ -139,7 +153,9 @@ void main () {
         printf(" Input for matrix B's row %d column 1 : ",(i+1));
         scanf("%lf",&b[i]);
     }
-
+    printf("\n");
+    printf(" \n\n 1 : Infeasible solution \n 2 : Feasible solution \n 3. Degenerate solution \n Enter option (1-3): ");
+    scanf("%d",&option);
 
     int arr[n],k;
     for(i=0;i<n;i++)
@@ -165,15 +181,15 @@ void main () {
     }
 
     double a_new[100][100];
-    int flag, track, h;
+    int flag, track, h,result=0;
 
     for(i=0;i<nc;i++)
     {
         printf("\n");
-        for(j=0;j<r;j++)
-        {
-            printf(" x%d = 0 ",new2darr[i][j]+1);
-        }
+        // for(j=0;j<r;j++)
+        // {
+        //     printf(" x%d = 0 ",new2darr[i][j]+1);
+        // }
         track = 0;
         for(j=0;j<n;j++)
         {
@@ -201,7 +217,12 @@ void main () {
         {
             a_new[h][m] = b[h];
         }
-        gauss_elimination(a_new,m,n,new2darr[i]);
-
+        result += gauss_elimination(a_new,m,n,new2darr[i],option,r);
     }
+    if(result==0)
+    {
+        printf("No such solution found.");
+    }
+
+    printf("\n\n");
 }

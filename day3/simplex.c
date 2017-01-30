@@ -146,48 +146,48 @@
 //     a = simplex_solve(a,m);
 // }while(terminate(a,m)==0);
 
-double * doit (double a[][100],int n)
-{
-    double *ptr;
-    int i,j;
-    for(i=0;i<n;i++)
-    {
-        for(j=0;j<n;j++)
-        {
-            *(ptr + n*i+j) = a[i][j] + 1;
-        }
-    }
-    return ptr;
-}
 
-void main () 
-{
-    int i,j,m,n,optimal;
-    printf("\n Enter number of unknowns (n) : ");
-    scanf("%d",&n);
+
+// double** doit (double** a,int n)
+// {
+//     int i,j;
+//     for(i=0;i<n;i++)
+//     {
+//         for(j=0;j<n;j++)
+//         {
+//             a[i][j] = i+j;
+//         }
+//     }
+//     return a;
+// }
+
+// void main () 
+// {
+    // int i,j,m,n,optimal;
+    // printf("\n Enter number of unknowns (n) : ");
+    // scanf("%d",&n);
     // printf(" Enter number of equations (m) : ");
     // scanf("%d",&m);
     // double a[m][n],b[m],objective_function[n];
-    double a[n][n],*ptr;
-    printf("\n");
-    for(i=0;i<n;i++)
-    {
-        for(j=0;j<n;j++)
-        {
-            printf(" Input for marix A's row %d column %d : ",(i+1),(j+1));
-            scanf("%lf",&a[i][j]);
-        }
-    }
-    printf("\n");
-    ptr = doit(a,n);
-    for(i=0;i<n;i++)
-    {
-        for(j=0;j<n;j++)
-        {
-            a[i][j] = *(ptr + i*n + j);
-            printf(" \n A%d %d = %lf",i+1,j+1,a[i][j]);
-        }
-    }
+    // double** a;
+    // printf("\n");
+    // for(i=0;i<n;i++)
+    // {
+    //     for(j=0;j<n;j++)
+    //     {
+    //         printf(" Input for marix A's row %d column %d : ",(i+1),(j+1));
+    //         scanf("%lf",&a[i][j]);
+    //     }
+    // }
+    // printf("\n");
+    // a = doit(a,n);
+    // for(i=0;i<n;i++)
+    // {
+    //     for(j=0;j<n;j++)
+    //     {
+    //         printf(" \n A%d %d = %lf",i+1,j+1,a[i][j]);
+    //     }
+    // }
     // for(i=0;i<m;i++)
     // {
     //     printf(" Input for matrix B's row %d column 1 : ",(i+1));
@@ -303,5 +303,38 @@ void main ()
     // {
     //     printf("\n\n Exactly one optimal solution, with optimal objective function value = %lf",sum[0]);        
     // }
+// }
+
+double * it(double *ptr, int n)
+{
+    int i;
+    for(i=0;i<n;i++)
+    {
+        *(ptr+i) = *(ptr+i)+1;
+    }
+    return ptr;
 }
 
+
+double * doit(double *ptr, int n)
+{
+    int i;
+    for(i=0;i<n;i++)
+    {
+        ptr = it(ptr,n);
+    }
+    return ptr;
+}
+
+void main()
+{
+    double arr[] = {7,8,9};
+    double *ptr;
+    int i,n=3;
+    ptr = arr;
+    ptr = doit(ptr,n);
+    for(i=0;i<n;i++)
+    {
+        printf("%lf\n",arr[i]);       
+    }
+}

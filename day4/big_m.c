@@ -151,25 +151,25 @@ double * bigm_solve(double *ptr, int *ptr2, int m, int n)
     printf("\n\n Tableu from iteration  %d \n",i++);
     print_array(ptr,m,n);    
     printf("\n\n");   
-    // while(next_iteration_index(ptr,m,n)!=-1)
-    // {
-    //     printf(" Tableu from iteration  %d \n",i++);
-    //     p = pivot_index(ptr,m,n);
-    //     ptr2 = swap_variables(ptr2,m,n,p);
-    //     ptr = convert_pivot(ptr,m,n,p);
-    //     ptr = convert_row(ptr,m,n,p);
-    //     ptr = convert_column(ptr,m,n,p);
-    //     ptr = convert_others(ptr,m,n,p);
-    //     print_array(ptr,m,n);    
-    //     printf("\n\n");
-    // }
-    // print_solution(ptr,ptr2,m,n);
+    while(next_iteration_index(ptr,m,n)!=-1)
+    {
+        printf(" Tableu from iteration  %d \n",i++);
+        p = pivot_index(ptr,m,n);
+        ptr2 = swap_variables(ptr2,m,n,p);
+        ptr = convert_pivot(ptr,m,n,p);
+        ptr = convert_row(ptr,m,n,p);
+        ptr = convert_column(ptr,m,n,p);
+        ptr = convert_others(ptr,m,n,p);
+        print_array(ptr,m,n);    
+        printf("\n\n");
+    }
+    print_solution(ptr,ptr2,m,n);
     return ptr;
 }
 
 void main()
 {
-    int m,n,i,j,option,surplus=0;
+    int m,n,n_old,i,j,surplus=0;
     double M = 1000.0;
     printf("\n Enter number of unknowns (n) : ");
     scanf("%d",&n);
@@ -177,7 +177,9 @@ void main()
     scanf("%d",&m);
     m++;
     n++;
-    double arr[m*n],nbv[n-1],bv[m-1];
+    n_old = n;
+    int option[m];
+    double arr[m*n];
     printf("\n");
     for(i=0;i<m-1;i++)
     {
@@ -203,43 +205,67 @@ void main()
     for(i=0;i<m-1;i++)
     {
         printf(" Type of equation / inequation %d \n 1. Ax >= B \n 2. Ax = B \n 3. Ax <= B \n Enter your option : ",(i+1));
-        scanf("%d",&option);
-        if(option==1 || option == 2)
+        scanf("%d",&option[i]);
+        if(option[i]==1)
         {
-            // if(option==1)
-            // {
-            //     n++;
-            //     for(j=0;j<m;j++)
-            //     {
-            //         arr[j*n+n-1] = arr[j*n+n-2];                       
-            //     }
-            //     for(j=0;j<m-1;j++)
-            //     {
-            //         if(j==surplus)
-            //         {
-            //             arr[j*n+n-2] = -1.0;
-            //         }
-            //         else
-            //         {
-            //             arr[j*n+n-2] = 0.0;                        
-            //         }
-            //     }            
-            //     surplus++;
-            // }
-            // for(j=0;j<n;j++)
-            // {
-            //     arr[(m-1)*n+j] -= (M*arr[i*n+j]);
-            // }
+            n++;
         }
     }
 
+    double bigm_arr[m*n];
+    for(i=0;i<m-1;i++)
+    {
+        for(j=0;j<n_old-1;j++)
+        {
+            bigm_arr[i*n+j] = arr[i*n_old+j];
+        }
+    }
+    for(i=0;i<m-1;i++)
+    {
+        if(option[i]==1)
+        {
+            for(j=n_old-1;j<n-1;j++)
+            {
+                bigm_arr[i*n+j]= 0.0;
+            }
+            bigm_arr[i*n+n_old-1+surplus]= -1.0;
+            surplus++;
+        }
+    }    
+    for(i=0;i<m-1;i++)
+    {
+        bigm_arr[i*n+n-1] = arr[i*n_old+n_old-1]; 
+    }
+    for(j=0;j<n-1;j++)
+    {
+        bigm_arr[(m-1)*n+j] = arr[(m-1)*n_old+j];
+    }
+    double sum;
+    bigm_arr[m*n-1] = 0.0;
+    for(j=0;j<n;j++)
+    {
+        sum = 0.0;
+        for(i=0;i<m-1;i++)
+        {
+            if(option[i]<3)
+            {
+                sum += (bigm_arr[i*n+j]*M);                
+            }    
+            else
+            {
+                sum += (bigm_arr[i*n+j]);                
+            }    
+
+        }        
+        bigm_arr[(m-1)*n+j] -= sum;
+    }
     double *ptr;
     int arr2[100], *ptr2;
     for(i=0;i<n;i++)
     {
         arr2[i] = (i+1);
     }
-    ptr = arr;
+    ptr = bigm_arr;
     ptr2 = arr2;
     ptr = bigm_solve(ptr,ptr2,m,n);
 }

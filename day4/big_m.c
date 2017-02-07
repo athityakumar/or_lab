@@ -28,8 +28,8 @@ int next_iteration_index(double *ptr, int m, int n)
 int pivot_index(double *ptr, int m, int n)
 {
     int i,j=next_iteration_index(ptr,m,n),index=j;
-    double vi = *(ptr+j),vn = *(ptr+n-1),min = vn/vi;
-    for(i=1;i<m-1;i++)
+    double vi = -1.0,vn = -1.0,min = 10000.0;
+    for(i=0;i<m-1;i++)
     {
         vi = *(ptr+i*n+j);
         vn = *(ptr+i*n+n-1);
@@ -119,7 +119,7 @@ void print_array(double *ptr, int m, int n)
 void print_solution(double *ptr, int *ptr2, int m, int n)
 {
     int i;
-    for(i=0;i<n;i++)
+    for(i=0;i<m-1;i++)
     {
         if(*(ptr2+i) != -1)
         {
@@ -141,17 +141,24 @@ void print_solution(double *ptr, int *ptr2, int m, int n)
 int * swap_variables(int *ptr2, int m, int n, int p)
 {
     int p_row = p/n, p_col = p%n;
-    *(ptr2+p_col) = p_row;
+    if(p_row==m-2)
+    {
+        *(ptr2+p_col) = 0;
+    }
+    else
+    {
+        *(ptr2+p_col) = p_row+1;
+    }
     return ptr2;
 }
 
-double * bigm_solve(double *ptr, int *ptr2, int m, int n)
+double * bigm_solve(double *ptr, int *ptr2, int m, int n, int obj_type)
 {   
     int p,i=0;
     printf("\n\n Tableu from iteration  %d \n",i++);
     print_array(ptr,m,n);    
     printf("\n\n");   
-    while(next_iteration_index(ptr,m,n)!=-1)
+    while(next_iteration_index(ptr,m,n)!=-1 && i<5)
     {
         printf(" Tableu from iteration  %d \n",i++);
         p = pivot_index(ptr,m,n);
@@ -163,13 +170,17 @@ double * bigm_solve(double *ptr, int *ptr2, int m, int n)
         print_array(ptr,m,n);    
         printf("\n\n");
     }
+    if(obj_type == 1)
+    {
+        *(ptr + m*n -1) *= (-1);
+    }  
     print_solution(ptr,ptr2,m,n);
     return ptr;
 }
 
 void main()
 {
-    int m,n,n_old,i,j,surplus=0;
+    int m,n,n_old,i,j,surplus=0,obj_type;
     double M = 1000.0;
     printf("\n Enter number of unknowns (n) : ");
     scanf("%d",&n);
@@ -212,6 +223,10 @@ void main()
         }
     }
 
+    printf("\n");
+    printf(" Type of optimization \n 1. Minimize \n 2. Maximize \n Enter your option : ");
+    scanf("%d",&obj_type);
+
     double bigm_arr[m*n];
     for(i=0;i<m-1;i++)
     {
@@ -244,6 +259,7 @@ void main()
     bigm_arr[m*n-1] = 0.0;
     for(j=0;j<n;j++)
     {
+        bigm_arr[(m-1)*n+j] *= -1;
         sum = 0.0;
         for(i=0;i<m-1;i++)
         {
@@ -251,21 +267,12 @@ void main()
             {
                 sum += (bigm_arr[i*n+j]*M);                
             }    
-            else
-            {
-                sum += (bigm_arr[i*n+j]);                
-            }    
-
-        }        
+        }      
         bigm_arr[(m-1)*n+j] -= sum;
     }
     double *ptr;
     int arr2[100], *ptr2;
-    for(i=0;i<n;i++)
-    {
-        arr2[i] = (i+1);
-    }
     ptr = bigm_arr;
     ptr2 = arr2;
-    ptr = bigm_solve(ptr,ptr2,m,n);
+    ptr = bigm_solve(ptr,ptr2,m,n,obj_type);
 }

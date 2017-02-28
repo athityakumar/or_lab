@@ -180,7 +180,7 @@ double * bigm_solve(double *ptr, int *ptr2, int m, int n, int obj_type)
 
 void main()
 {
-    int m,n,n_old,i,j,surplus=0,obj_type;
+    int m,n,n_old,i,j,surplus=0,obj_type,menu;
     double M = 1000.0;
     printf("\n Enter number of unknowns (n) : ");
     scanf("%d",&n);
@@ -226,7 +226,12 @@ void main()
     printf("\n");
     printf(" Type of optimization \n 1. Minimize \n 2. Maximize \n Enter your option : ");
     scanf("%d",&obj_type);
-
+    do 
+    {
+        printf("(1) List of all BFS \n(2) Number of Iterations to solve the problem \n(3) List of all Non-basic variables along with net evaluations in ith iteration \n(4) List of Basic variables along with min ratios in ith iteration \n(5) simplex table of ith iteration \n(6) optimal solution \n(7) Exit \nChoose your option (1-7) : ");
+        scanf("%d",&menu);
+    
+    }while(menu != 7);
     double bigm_arr[m*n];
     for(i=0;i<m-1;i++)
     {

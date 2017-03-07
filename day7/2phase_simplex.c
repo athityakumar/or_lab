@@ -1,8 +1,6 @@
-
-#include<stdio.h>
-#include<stdlib.h>
-#include<math.h>
-
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
 
 int get_slack(int ies[], int m){
     int slack = 0;

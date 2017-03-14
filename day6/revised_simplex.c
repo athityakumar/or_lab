@@ -1,278 +1,213 @@
-#include <stdio.h>
-#include <math.h>
+#include<iostream>
+#include<iomanip>
 
-int next_iteration_index(double *ptr, int m, int n)
-{
-    int i,index=0;
-    for(i=1;i<n-1;i++)
-    {   
-        if(*(ptr+(m-1)*n+i) < *(ptr+(m-1)*n+index))
-        {
-            index = i;
-        }
-    }
-    if(*(ptr+(m-1)*n+index) > 0)
-    {
-        return -1;
-    }
-    else
-    {
-        if(*(ptr+(m-1)*n+index) == 0)
-        {
-            return -2;
-        }
-    }
-    return index;
+#define MAX 5
+#define FORN(i,n) for(int i=0;i<n;i++)
+
+using namespace std;
+
+float cb[MAX]={0,0,0},cnb[MAX]={5,5,6};
+int m = 3; // Number of variables
+//float b1[MAX][MAX];
+
+int copy(float a[][MAX], float b[][MAX]){
+    FORN(i,MAX)
+        FORN(j,MAX)
+            a[i][j] = b[i][j];
 }
 
-int pivot_index(double *ptr, int m, int n)
-{
-    int i,j=next_iteration_index(ptr,m,n),index=j;
-    double vi = -1.0,vn = -1.0,min = 10000.0;
-    for(i=0;i<m-1;i++)
-    {
-        vi = *(ptr+i*n+j);
-        vn = *(ptr+i*n+n-1);
-        if(vi>0 && (vn/vi)<min)
-        {
-            min = vn/vi;
-            index = i*n+j;
-        }
+void initialize_unity(float b[][MAX]){
+    FORN(i,MAX)
+        b[i][i] = 1.0;
+}
+
+void print_matrix(float b[][MAX], int n, int m=0){
+    if (m==0) m=n;
+
+    FORN(i, n){
+        FORN(j, m)
+            cout<<setw(7)<<setprecision(3)<<std::setfill(' ')<<b[i][j];
+        cout<<endl;
     }
-    return index;
 }
 
-double * convert_pivot(double *ptr, int m, int n, int p_index)
-{
-    double p = *(ptr+p_index);
-    p = 1/p;
-    *(ptr+p_index) = p;
-    return ptr;
-}
-
-double * convert_row(double *ptr, int m, int n, int p_index)
-{
-    double p = *(ptr+p_index),r;
-    int p_row = p_index/n,p_col=p_index%n,i;
-    for(i=0;i<n;i++)
-    {
-        if(i!=p_col)
-        {
-            r = *(ptr+p_row*n+i);
-            r = r*p; 
-            *(ptr+p_row*n+i) = r;       
-        }
+void print_vector(float b[MAX], int n){
+    cout<<"[ ";
+    FORN(i, n){
+        cout<<setw(7)<<setprecision(3)<<std::setfill(' ')<<b[i]<<" ";
     }
-    return ptr;
+    cout<<"] "<<endl;
 }
 
-double * convert_column(double *ptr, int m, int n, int p_index)
-{
-    double p = *(ptr+p_index),c;
-    int p_row = p_index/n,p_col = p_index%n,i;   
-    for(i=0;i<m;i++)
-    {
-        if(i!=p_row)
-        {
-            c = *(ptr+i*n+p_col);
-            c = (-1)*c*p;
-            *(ptr+i*n+p_col) = c;                  
+void swap(float &a, float &b){
+    float temp = a;
+    a = b;
+    b = temp;
+}
+
+
+int calculate(float b[][MAX], float bi[][MAX], float b1[][MAX] ,float c[MAX], int n){
+
+    FORN(aa,5){
+
+        float eita[MAX], e[MAX];
+
+        float x[MAX] = {0};
+        float y[MAX] = {0}, zc[MAX] = {0};
+        float z=0;
+        float alpha_temp[MAX] = {0};
+
+        FORN(i, n)
+            FORN(j, n)
+                x[i] += bi[i][j] * c[j];
+
+        z = 0;
+        FORN (i,n)
+            z += cb[i]*x[i];
+
+
+        cout<<"z:    ";
+        cout<<z<<endl;
+        cout<<"x: ";
+        print_vector(x,n);
+
+
+        FORN (i, n)
+            FORN (j, n)
+                y[i] += cb[j] * bi[j][i];
+
+        FORN (i, m){
+            FORN (j, n)
+                zc[i] += y[j] * b1[j][i];
+            zc[i] -= cnb[i];
         }
-    }
-    return ptr;
-}
 
-double * convert_others(double *ptr, int m, int n, int p_index)
-{
-    double p = *(ptr+p_index),c,r,s;
-    int p_row = p_index/n,p_col = p_index%n,i,j;   
-    for(i=0;i<m;i++)
-    {
-        for(j=0;j<n;j++)
-        {
-            if(i!=p_row && j!=p_col)
-            {
-                r = *(ptr+p_row*n+j);
-                c = *(ptr+i*n+p_col);
-                s = *(ptr+i*n+j);
-                s += (c*r/p); 
-                *(ptr+i*n+j) = s;                                  
+        float min = 0;
+        int min_index = -1;
+        FORN(i, m){
+            if (zc[i]<min) 
+                min=zc[i],min_index=i;
+        }
+
+        int q = min_index; // Entering variable
+
+        FORN(i,n){
+            FORN(j,n)
+                alpha_temp[i] += bi[i][j] * b1[j][min_index];
+            alpha_temp[i] = x[i] / alpha_temp[i];
+        }
+
+        min = 99999;
+        min_index = -1;
+        
+        FORN(i, n){
+            if (alpha_temp[i]<min) 
+                min=alpha_temp[i],min_index=i;
+        }
+
+
+        if (min_index<0) return 0;
+        int r = min_index; //leaving variable
+
+
+        float E[MAX][MAX] = {0};
+        float btemp[MAX][MAX];
+
+        // Calculating e
+        FORN(j,n){
+            e[j] = 0;
+            FORN(k,n){
+                e[j] += bi[j][k]*b1[k][q];
             }
         }
-    }
-    return ptr;
-}
 
-void print_array(double *ptr, int m, int n)
-{
-    int i,j;
-    for(i=0;i<m;i++)
-    {
-        printf("\n");
-        for(j=0;j<n;j++)
-        {
-            printf(" %lf ",*(ptr+i*n+j));       
+        // Calculating eita
+        FORN(j,n){
+            if (j==r)
+                eita[j] = 1/e[r];
+            else
+                eita[j] = -e[j]/e[r];
         }
-    }   
-}
 
-void print_solution(double *ptr, int *ptr2, int m, int n)
-{
-    int i;
-    for(i=0;i<m-1;i++)
-    {
-        if(*(ptr2+i) != -1)
-        {
-            printf(" x%d = %lf ",*(ptr2+i)+1,*(ptr+i*n+n-1));       
+
+        initialize_unity(E);
+
+        FORN(i,n){
+            float t = b[i][r];
+            b[i][r] = b1[i][q];
+            b1[i][q] = t;
+            E[i][r] = eita[i];
         }
-    }    
-    printf("\n Other variables are non-basic, i.e, 0.");
-    printf("\n Optimal solution z = %lf ",*(ptr+m*n-1));
-    if (next_iteration_index(ptr,m,n)==-2)
-    {
-        printf("\n Alternate solution exists.");
-    }
-    else
-    {
-        printf("\n Unique optimal solution - no alternate solution.");
-    }
-}
 
-int * swap_variables(int *ptr2, int m, int n, int p)
-{
-    int p_row = p/n, p_col = p%n;
-    if(p_row==m-2)
-    {
-        *(ptr2+p_col) = 0;
-    }
-    else
-    {
-        *(ptr2+p_col) = p_row+1;
-    }
-    return ptr2;
-}
+        swap(cb[r],cnb[q]);
 
-double * bigm_solve(double *ptr, int *ptr2, int m, int n, int obj_type)
-{   
-    int p,i=0;
-    printf("\n\n Tableu from iteration  %d \n",i++);
-    print_array(ptr,m,n);    
-    printf("\n\n");   
-    while(next_iteration_index(ptr,m,n)!=-1 && i<5)
-    {
-        printf(" Tableu from iteration  %d \n",i++);
-        p = pivot_index(ptr,m,n);
-        ptr2 = swap_variables(ptr2,m,n,p);
-        ptr = convert_pivot(ptr,m,n,p);
-        ptr = convert_row(ptr,m,n,p);
-        ptr = convert_column(ptr,m,n,p);
-        ptr = convert_others(ptr,m,n,p);
-        print_array(ptr,m,n);    
-        printf("\n\n");
-    }
-    if(obj_type == 1)
-    {
-        *(ptr + m*n -1) *= (-1);
-    }  
-    print_solution(ptr,ptr2,m,n);
-    return ptr;
-}
-
-void main()
-{
-    int m,n,n_old,i,j,surplus=0,obj_type;
-    double M = 1000.0;
-    printf("\n Enter number of unknowns (n) : ");
-    scanf("%d",&n);
-    printf(" Enter number of equations (m) : ");
-    scanf("%d",&m);
-    m++;
-    n++;
-    n_old = n;
-    int option[m];
-    double arr[m*n];
-    printf("\n");
-    for(i=0;i<m-1;i++)
-    {
-        for(j=0;j<n-1;j++)
-        {
-            printf(" Input for marix A's equation %d coeffiecient of x%d : ",(i+1),(j+1));
-            scanf("%lf",&arr[n*i+j]);
-        }
-    }
-    printf("\n");
-    for(i=0;i<m-1;i++)
-    {
-        printf(" Input for matrix B's - constant for equation %d : ",(i+1));
-        scanf("%lf",&arr[n*(i+1)-1]);
-    }
-    printf("\n");
-    for(i=0;i<n-1;i++)
-    {
-        printf(" Input for objective function's coefficient of x%d : ",(i+1));
-        scanf("%lf",&arr[(m-1)*n+i]);
-    }
-    printf("\n");
-    for(i=0;i<m-1;i++)
-    {
-        printf(" Type of equation / inequation %d \n 1. Ax >= B \n 2. Ax = B \n 3. Ax <= B \n Enter your option : ",(i+1));
-        scanf("%d",&option[i]);
-        if(option[i]==1)
-        {
-            n++;
-        }
-    }
-
-    printf("\n");
-    printf(" Type of optimization \n 1. Minimize \n 2. Maximize \n Enter your option : ");
-    scanf("%d",&obj_type);
-
-    double bigm_arr[m*n];
-    for(i=0;i<m-1;i++)
-    {
-        for(j=0;j<n_old-1;j++)
-        {
-            bigm_arr[i*n+j] = arr[i*n_old+j];
-        }
-    }
-    for(i=0;i<m-1;i++)
-    {
-        if(option[i]==1)
-        {
-            for(j=n_old-1;j<n-1;j++)
-            {
-                bigm_arr[i*n+j]= 0.0;
+        FORN(i,n)
+            FORN(j,n){
+                btemp[i][j] = 0;
+                FORN(k,n){
+                    btemp[i][j] += E[i][k] * bi[k][j];
+                }
             }
-            bigm_arr[i*n+n_old-1+surplus]= -1.0;
-            surplus++;
+
+
+        cout<<"Basic : "<<endl;
+        print_matrix(b,n);
+        cout<<"Basic Inverse: "<<endl;
+        print_matrix(btemp,n);
+
+        cout<<"\n";
+
+
+        copy(bi, btemp);
         }
-    }    
-    for(i=0;i<m-1;i++)
+}
+/*
+void input(){
+    string inequality;
+    printf("Enter no of variables\n");
+    scanf("%d",&var);
+
+    printf("Enter no. of equations\n");
+    scanf("%d",&eqn);
+
+    for(i = 0 ; i < eqn ; i++)
     {
-        bigm_arr[i*n+n-1] = arr[i*n_old+n_old-1]; 
-    }
-    for(j=0;j<n-1;j++)
-    {
-        bigm_arr[(m-1)*n+j] = arr[(m-1)*n_old+j];
-    }
-    double sum;
-    bigm_arr[m*n-1] = 0.0;
-    for(j=0;j<n;j++)
-    {
-        bigm_arr[(m-1)*n+j] *= -1;
-        sum = 0.0;
-        for(i=0;i<m-1;i++)
+        printf("Input equations #%d \n" , i + 1);
+        for(j = 0 ; j < var+1 ; j++)
         {
-            if(option[i]<3)
-            {
-                sum += (bigm_arr[i*n+j]*M);                
-            }    
-        }      
-        bigm_arr[(m-1)*n+j] -= sum;
-    }
-    double *ptr;
-    int arr2[100], *ptr2;
-    ptr = bigm_arr;
-    ptr2 = arr2;
-    ptr = bigm_solve(ptr,ptr2,m,n,obj_type);
+            scanf("%f",&mat[i][j]);
+                        
+        }
+        //cin >> inequality;
+        //if (inequality.at(0) == '<')
+        //{
+             slackVar++;
+             scanf("%f", &mat[i][j]);
+        }
+        //else if (inequality.at(0) == '>')
+        //{
+         // Can be extended for Big-M Method
+        //}
+                
+        }
+
+}
+*/
+int main(){
+
+    float b[MAX][MAX]={0};
+    float bi[MAX][MAX];
+    // float b1[MAX][MAX] = {{3,2,3,1},{3,0,1,2},{1,3,0,2}};
+    // float c[MAX] = {200,180,160,50};
+    float b1[MAX][MAX] = {{-2,3,0,5},{-2,-1,1,-2},{1,0,3,3}};
+    float c[MAX] = {-2,3,3,0};
+
+    int n = 3;
+
+    initialize_unity(b);
+    copy(bi,b);
+
+    calculate(b,bi,b1,c,n);
+
+    return 0;
 }

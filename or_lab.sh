@@ -1,6 +1,12 @@
-# Hack to run c files with 1 command like Python / Ruby
+# Hack to run c / c++ files with 1 command like Python / Ruby
 function or_c {
 gcc $1 -o $1.out -std=c99
+./$1.out
+ls
+}
+
+function or_cpp {
+g++ $1 -o $1.out
 ./$1.out
 ls
 }

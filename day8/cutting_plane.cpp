@@ -13,6 +13,7 @@ int dualdmap[10]={-1};
 float dualmat[10][10], dualb[10], dualtemp[10][10], dualconstants[10];
 float dualans[10][10], dualz[10];
 int dualR, dualC;
+
 int main()
 {
 	int in_var, eqn, var;
@@ -113,8 +114,6 @@ int main()
 			for(int j=0;j<=in_var;j++)
 			{
 				if(i==pivot || j==minpos)continue;
-				//cout <<  "\n\n Debuggind pqrs  for i = " << i << " and j=  " << j << "\n";
-				//cout << " q " << temp[pivot][j] << " r " << temp[i][minpos];
 				temp[i][j] = temp[i][j] - 1.0*temp[pivot][j]*temp[i][minpos]/p;
 			}
 		}
@@ -142,7 +141,6 @@ int main()
 			}
 			cout << endl;
 		}
-		//flag = 0;
 	}
 
 	if(incos)
@@ -150,13 +148,7 @@ int main()
 		cout << "The given system of equations inconsistent  ";
 		return 0;
 	}
-	//cout << "The maximum of z is : " << temp[eqn][in_var];
-	//for(int i=0;i<10;i++)
-	//{
-	//	if(d[i]){
-	//		cout << " at x" << i+1 << " = " << temp[dmap[i]][in_var];
-	//	}
-	//}
+
 	for(int j=0;j<in_var;j++)
 	{
 		if(temp[eqn][j]==0)

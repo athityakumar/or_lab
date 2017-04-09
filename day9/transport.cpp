@@ -6,8 +6,7 @@
 using namespace std;
 
 float mat[MAX][MAX] = {0};
-int m; //Number of Sources
-int n; // Number of Destination
+int m, n; 
 float temp[MAX][MAX], aa[MAX], bb[MAX];
 float u[MAX] = {0}, v[MAX] = {0};
 
@@ -31,7 +30,7 @@ bool min_row_col(float row, float col){
 }
 
 int main(){
-	// Using NWCR Method
+	// Using North West Corner Method
 	cout << "Enter the number of sources: ";cin >> m;
 	cout << "Enter the number of destinations: ";cin >> n;
 	cout << "Enter the payoff matrix: \n";

@@ -184,7 +184,7 @@ int main()
 			}
 		}
 		cout << "\nvalue of xbmax: " << xbmax << endl;
-		if((int)xbmax==-1 || fabs(xbmax-1)<1e-5){cout << "\n Integer solution already calculated : ";return 0;}
+		if((int)xbmax==-1 || fabs(xbmax-1)<1e-5){cout << "\n"<<endl;return 0;}
 		cout << "\n value of xbpos : " << xbpos;
 		for(int j=0;j<=in_var;j++){
 			dualtemp[eqn][j] = floor(temp[xbpos][j]) - temp[xbpos][j];

@@ -1,4 +1,5 @@
 # Hack to run c / c++ files with 1 command like Python / Ruby
+# Like `or_c filename.c` or `or_cpp filename.cpp`
 function or_c {
 gcc $1 -o $1.out -std=c99
 ./$1.out

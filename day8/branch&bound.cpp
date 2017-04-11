@@ -1,6 +1,6 @@
-#include <stdio.h>
-#include <conio.h>
-#include <stdlib.h>
+#include<stdio.h>
+#include<conio.h>
+#include<stdlib.h>
 
 int a[10][10],visited[10],n,cost=0;
 

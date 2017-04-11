@@ -51,7 +51,7 @@ int main()
 		temp[eqn][i] = -a;
 	}
 	
-	cout << "Initial simplex table\n ";
+	cout << "\nInitial simplex table\n ";
 	for(int i=0;i <= eqn;i++)
 	{
 		for(int j=0;j<=in_var;j++)
@@ -61,7 +61,7 @@ int main()
 		cout << endl;
 	}
 	int dummy=1;
-	cout << " Flag is " << flag;
+	cout << "\n Flag is " << flag;
 	while(flag){
 		
 		float min = 10000; int prod=0;
@@ -85,7 +85,7 @@ int main()
 			}
 		}
 		
-		cout << " Value of minpos is " << minpos << "  and invar is  " << in_var << endl;
+		cout << "\n Value of minpos is " << minpos << "  and incoming variable is  " << in_var << endl;
 		int pivot = -1;
 		float minp = 10000;
 		for(int i=0;i< eqn;i++)
@@ -102,8 +102,8 @@ int main()
 			incos = 1;
 			break;
 		}
-		cout << "PIvot " << temp[pivot][minpos] << " at pos " << pivot;
-		cout << "Most nbegatiove element " << min;
+		cout << "\n Pivot : " << temp[pivot][minpos] << " at pos " << pivot;
+		cout << "\n Most negative element " << min;
 		
 		d[minpos] = 1;
 		dmap[minpos] = pivot;
@@ -132,7 +132,7 @@ int main()
 
 		
 		
-		cout << "Simplex table\n ";
+		cout << "\n Simplex table\n ";
 		for(int i=0;i <= eqn;i++)
 		{
 			for(int j=0;j<=in_var;j++)
@@ -145,7 +145,7 @@ int main()
 
 	if(incos)
 	{
-		cout << "The given system of equations inconsistent  ";
+		cout << "\n\n The given system of equations inconsistent  ";
 		return 0;
 	}
 
@@ -153,7 +153,7 @@ int main()
 	{
 		if(temp[eqn][j]==0)
 		{
-			cout << " However infinite solutions exist for this case ";
+			cout << "\n\n However infinite solutions exist for this case ";
 			break;
 		}
 	}
@@ -184,8 +184,8 @@ int main()
 			}
 		}
 		cout << "\nvalue of xbmax: " << xbmax << endl;
-		if((int)xbmax==-1 || fabs(xbmax-1)<1e-5){cout << "Integer solution already calculated : ";return 0;}
-		cout << "value of xbpos : " << xbpos;
+		if((int)xbmax==-1 || fabs(xbmax-1)<1e-5){cout << "\n Integer solution already calculated : ";return 0;}
+		cout << "\n value of xbpos : " << xbpos;
 		for(int j=0;j<=in_var;j++){
 			dualtemp[eqn][j] = floor(temp[xbpos][j]) - temp[xbpos][j];
 			dualtemp[eqn+1][j] = temp[eqn][j];
@@ -217,8 +217,8 @@ int main()
 			float minp = 10000;
 		for(int j=0;j<in_var;j++){
 			float f = 1.0*dualtemp[eqn][j]/dualtemp[pivot][j];
-			cout << "Value f : " << fabs(f) << " ";
-			if(fabs(f) < minp){minp = fabs(f);minpos = j;cout << "Minpos selected as: " << j << endl;}
+			cout << "\n Value f : " << fabs(f) << " ";
+			if(fabs(f) < minp){minp = fabs(f);minpos = j;cout << " \n Minpos selected as: " << j << endl;}
 		}
 		float p = dualtemp[pivot][minpos];
 		cout << "\n Value of minpos and p: " << minpos << " " << p << endl;
